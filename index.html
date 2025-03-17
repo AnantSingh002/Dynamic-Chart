@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <style>
+       body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Professional font */
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* Light gray background */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    color: #343a40; /* Dark gray text */
+    line-height: 1.6; /* Improved readability */
+}
+
+h1 {
+    text-align: center;
+    color: #007bff; /* Professional blue */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    font-size: 2.5em; /* Adjusted font size */
+    margin-bottom: 20px;
+}
+
+#chart-container {
+    width: 90%; /* Increased width */
+    max-width: 800px; /* Maximum width */
+    margin: 30px auto;
+    background-color: #ffffff; /* White container */
+    border: 1px solid #dee2e6; /* Light gray border */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 30px;
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+#status {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #28a745; /* Professional green */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    text-align: center; /* Center the status */
+}
+    </style>
+</head>
+
+<body>
+    <h1>Real-Time Data Visualization</h1>
+    <div id="chart-container">
+        <canvas id="realTimeChart" style="display: block; box-sizing: border-box; height: 500px; width: 730px;"></canvas>
+    </div>
+    <p id="status">Fetching real-time data...</p>
+
+    <script>
+        const ctx = document.getElementById('realTimeChart').getContext('2d');
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Real-Time Data',
+                        data: [],
+                        borderColor: 'rgba(0, 255, 204, 1)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointBackgroundColor: 'rgba(0, 255, 204, 1)',
+                        fill: false,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Time (seconds)',
+                            color: '#00ffcc',
+                        },
+                        ticks: {
+                            color: '#e0e0e0',
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        min: 0,
+                        title: {
+                            display: true,
+                            text: 'Value',
+                            color: '#00ffcc',
+                        },
+                        ticks: {
+                            stepSize: 10,
+                            color: '#e0e0e0',
+                        },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#e0e0e0',
+                        },
+                    },
+                },
+            },
+        });
+
+        let time = 0;
+
+        const fetchData = () => {
+            const newData = Math.random() * 100;
+            time += 1;
+
+            chart.data.labels.push(time);
+            chart.data.datasets[0].data.push(newData);
+
+            if (chart.data.labels.length > 20) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+
+            chart.update();
+
+            anime({
+                targets: chart.data.datasets[0].data,
+                easing: 'easeInOutSine',
+                duration: 500,
+            });
+        };
+
+        setInterval(fetchData, 2000);
+    </script>
+</body>
+
+</html>
